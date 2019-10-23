@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import './yummy_products.dart';
-import './widgets/product_item.dart';
+import '../yummy_products.dart';
+import '../widgets/product_item.dart';
 
 class ProductsOverviewPage extends StatelessWidget {
   @override
