@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-class ProductDetail extends StatelessWidget {
+class ProductDetailPage extends StatelessWidget {
+  static final String routeName = "/product-detail";
   @override
   Widget build(BuildContext context) {
     return Scaffold(

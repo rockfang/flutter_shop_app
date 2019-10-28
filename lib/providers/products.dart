@@ -1,6 +1,7 @@
-import './models/product.dart';
-List<Product> YUMMY_PRODUCTS = [
-    Product(
+import 'package:flutter/material.dart';
+import '../models/product.dart';
+class Products with ChangeNotifier {
+  List<Product> itemList = [Product(
       id: 'p1',
       title: 'Red Shirt',
       description: 'A red shirt - it is pretty red!',
@@ -31,5 +32,14 @@ List<Product> YUMMY_PRODUCTS = [
       price: 49.99,
       imageUrl:
           'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Cast-Iron-Pan.jpg/1024px-Cast-Iron-Pan.jpg',
-    ),
-  ];
+    ),];
+
+  List<Product> get items {
+    return [...itemList];
+  }
+
+  void addProduct() {
+    // _items.add(value);
+    notifyListeners();
+  }
+}

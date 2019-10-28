@@ -11,7 +11,7 @@ class ProductItem extends StatelessWidget {
       borderRadius: BorderRadius.circular(10),
       child: GestureDetector(
         onTap: (){
-          Navigator.of(context).pushNamed('/product-detail',arguments: "detail");
+          Navigator.of(context).pushNamed('/product-detail',arguments: title);
         },
         child: GridTile(
           child: Image.network(
@@ -20,9 +20,11 @@ class ProductItem extends StatelessWidget {
           ),
           footer: GridTileBar(
             backgroundColor: Colors.black54,
-            title: Text(
-              "名称",
-              textAlign: TextAlign.center,
+            title: FittedBox(
+                          child: Text(
+                title,
+                textAlign: TextAlign.center,
+              ),
             ),
             leading: IconButton(
               icon: Icon(Icons.favorite),
