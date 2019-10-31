@@ -9,9 +9,9 @@ class ProductsOverviewPage extends StatefulWidget {
 }
 
 class _ProductsOverviewPageState extends State<ProductsOverviewPage> {
+  var _showFavorite = false;
   @override
   Widget build(BuildContext context) {
-    var _showFavorite = false;
     return Scaffold(
         appBar: AppBar(
           title: Text("购物吧"),
