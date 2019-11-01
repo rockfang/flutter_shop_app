@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../widgets/products_grid.dart';
+import '../widgets/badge.dart';
+import '../providers/cart.dart';
+import '../pages/cart_page.dart';
 
 enum PopMenuOptions { favorite, all }
 
@@ -12,6 +16,7 @@ class _ProductsOverviewPageState extends State<ProductsOverviewPage> {
   var _showFavorite = false;
   @override
   Widget build(BuildContext context) {
+    //final cart = Provider.of<Cart>(context);
     return Scaffold(
         appBar: AppBar(
           title: Text("购物吧"),
@@ -32,7 +37,19 @@ class _ProductsOverviewPageState extends State<ProductsOverviewPage> {
                           child: Text("展示喜爱"), value: PopMenuOptions.favorite),
                       PopupMenuItem(
                           child: Text("展示所有"), value: PopMenuOptions.all)
-                    ])
+                    ]),
+            Consumer<Cart>(
+              builder: (ctx, cart, ch) => Badge(
+                    child: ch,
+                    value: cart.cartQuantity.toString(),
+                  ),
+              child: IconButton(
+                icon: Icon(Icons.shopping_cart),
+                onPressed: () {
+                  Navigator.of(context).pushNamed(CartPage.routeName);
+                },
+              ),
+            )
           ],
         ),
         body: Padding(
