@@ -43,7 +43,7 @@ class _ProductItemState extends State<ProductItem> {
                       },
                     )),
             trailing:  IconButton(
-              icon: Icon(Icons.shopping_cart),
+              icon: const Icon(Icons.shopping_cart),
               color: Theme.of(context).accentColor,
               onPressed: () {
                 cart.addOneItem(product.id, product.title, product.price);

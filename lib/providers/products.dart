@@ -49,6 +49,13 @@ class Products with ChangeNotifier {
       return itemList.where((item) => item.isFavorite).toList();
   }
 
+  double get totalAmount {
+    var amount =0.0;
+    itemList.forEach((item) {
+      amount += item.price;
+    });
+    return amount;
+  }
   Product getProductById(String id) {
     return items.firstWhere((item) => item.id == id);
   }

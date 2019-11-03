@@ -13,8 +13,6 @@ class ProductsGrid extends StatelessWidget {
     ///拿到数据源对象
     final productsData = Provider.of<Products>(context);
     ///通过数据源对象获取数据
-    ///
-    print(_showFav);
     final products = _showFav ? productsData.favoriteItems : productsData.items;
     print(products.length);
     return GridView.builder(
