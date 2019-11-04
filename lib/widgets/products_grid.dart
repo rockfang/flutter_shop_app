@@ -14,7 +14,6 @@ class ProductsGrid extends StatelessWidget {
     final productsData = Provider.of<Products>(context);
     ///通过数据源对象获取数据
     final products = _showFav ? productsData.favoriteItems : productsData.items;
-    print(products.length);
     return GridView.builder(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,

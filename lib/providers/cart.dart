@@ -18,8 +18,16 @@ class Cart with ChangeNotifier {
     return {..._items};
   }
 
-  int get cartQuantity {
+  int get cartProductTypes {
     return _items.length;
+  }
+
+  double get totalAmount {
+    var amount =0.0;
+    _items.forEach((key,item) {
+      amount += item.price * item.quantity;
+    });
+    return amount;
   }
 
   void addOneItem(String id, String title, double price) {
@@ -32,6 +40,16 @@ class Cart with ChangeNotifier {
       _items.putIfAbsent(
           id, () => CartItem(id: id, title: title, price: price, quantity: 1));
     }
+    notifyListeners();
+  }
+
+  void removeOneProduct(String id) {
+    _items.remove(id);
+    notifyListeners();
+  }
+
+  void clearCart() {
+    _items.clear();
     notifyListeners();
   }
 }

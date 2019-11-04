@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/products.dart';
 import '../providers/product.dart';
+
 class ProductDetailPage extends StatelessWidget {
   static final String routeName = "/product-detail";
   @override
@@ -10,8 +11,36 @@ class ProductDetailPage extends StatelessWidget {
     final products = Provider.of<Products>(context);
     final product = products.getProductById(productId);
     return Scaffold(
-        appBar: AppBar(
-      title: Text(product.title),
-    ));
+      appBar: AppBar(
+        title: Text(product.title),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            Container(
+              width: double.infinity,
+              height: 300,
+              padding: EdgeInsets.all(10),
+              child: Image.network(product.imageUrl,fit: BoxFit.cover,),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Text(
+              '\$${product.price}',
+              style: TextStyle(color: Colors.grey,fontSize: 26),
+            ),
+            Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: Text('${product.description}',
+                  style: TextStyle(color: Colors.grey),
+                  softWrap: true,
+                  textAlign: TextAlign.center,
+                )),
+          ],
+        ),
+      ),
+    );
   }
 }

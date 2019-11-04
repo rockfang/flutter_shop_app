@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/product.dart';
 import '../providers/cart.dart';
+import '../pages/product_detail_page.dart';
 class ProductItem extends StatefulWidget {
   @override
   _ProductItemState createState() => _ProductItemState();
@@ -17,7 +18,7 @@ class _ProductItemState extends State<ProductItem> {
       child: GestureDetector(
         onTap: () {
           Navigator.of(context)
-              .pushNamed('/product-detail', arguments: product.id);
+              .pushNamed(ProductDetailPage.routeName, arguments: product.id);
         },
         child: GridTile(
           child: Image.network(

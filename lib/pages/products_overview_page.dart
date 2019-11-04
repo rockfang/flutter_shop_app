@@ -41,7 +41,7 @@ class _ProductsOverviewPageState extends State<ProductsOverviewPage> {
             Consumer<Cart>(
               builder: (ctx, cart, ch) => Badge(
                     child: ch,
-                    value: cart.cartQuantity.toString(),
+                    value: cart.cartProductTypes.toString(),
                   ),
               child: IconButton(
                 icon: Icon(Icons.shopping_cart),

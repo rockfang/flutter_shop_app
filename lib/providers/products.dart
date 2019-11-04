@@ -28,7 +28,7 @@ class Products with ChangeNotifier {
       description: 'Warm and cozy - exactly what you need for the winter.',
       price: 19.99,
       imageUrl:
-          'https://live.staticflickr.com/4043/4438260868_cc79b3369d_z.jpg',
+          'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1572850078790&di=a4863d4021a4835751de6e5c80dbe13e&imgtype=0&src=http%3A%2F%2Fimg3.99114.com%2Fgroup1%2FM00%2F0B%2F17%2FwKgGS1jA8CuAV8CLAACUXwHCA_Q244_600_600.jpg',
     ),
     Product(
       id: 'p4',
@@ -49,13 +49,6 @@ class Products with ChangeNotifier {
       return itemList.where((item) => item.isFavorite).toList();
   }
 
-  double get totalAmount {
-    var amount =0.0;
-    itemList.forEach((item) {
-      amount += item.price;
-    });
-    return amount;
-  }
   Product getProductById(String id) {
     return items.firstWhere((item) => item.id == id);
   }
