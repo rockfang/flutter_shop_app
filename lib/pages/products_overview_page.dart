@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../widgets/main_drawer.dart';
 import '../widgets/products_grid.dart';
 import '../widgets/badge.dart';
 import '../providers/cart.dart';
@@ -14,44 +15,48 @@ class ProductsOverviewPage extends StatefulWidget {
 
 class _ProductsOverviewPageState extends State<ProductsOverviewPage> {
   var _showFavorite = false;
+
   @override
   Widget build(BuildContext context) {
     //final cart = Provider.of<Cart>(context);
-    return Scaffold(
-        appBar: AppBar(
-          title: Text("购物吧"),
-          actions: <Widget>[
-            PopupMenuButton(
-                onSelected: (value) {
-                  setState(() {
-                    if (PopMenuOptions.favorite == value) {
-                      _showFavorite = true;
-                    } else {
-                      _showFavorite = false;
-                    }
-                  });
-                },
-                icon: Icon(Icons.more_vert), //默认图标
-                itemBuilder: (_) => [
-                      PopupMenuItem(
-                          child: Text("展示喜爱"), value: PopMenuOptions.favorite),
-                      PopupMenuItem(
-                          child: Text("展示所有"), value: PopMenuOptions.all)
-                    ]),
-            Consumer<Cart>(
-              builder: (ctx, cart, ch) => Badge(
-                    child: ch,
-                    value: cart.cartProductTypes.toString(),
-                  ),
-              child: IconButton(
-                icon: Icon(Icons.shopping_cart),
-                onPressed: () {
-                  Navigator.of(context).pushNamed(CartPage.routeName);
-                },
+    AppBar appBar = AppBar(
+      title: Text("购物吧"),
+      actions: <Widget>[
+        PopupMenuButton(
+            onSelected: (value) {
+              setState(() {
+                if (PopMenuOptions.favorite == value) {
+                  _showFavorite = true;
+                } else {
+                  _showFavorite = false;
+                }
+              });
+            },
+            icon: Icon(Icons.more_vert), //默认图标
+            itemBuilder: (_) => [
+                  PopupMenuItem(
+                      child: Text("展示喜爱"), value: PopMenuOptions.favorite),
+                  PopupMenuItem(child: Text("展示所有"), value: PopMenuOptions.all)
+                ]),
+        Consumer<Cart>(
+          builder: (ctx, cart, ch) => Badge(
+                child: ch,
+                value: cart.cartProductTypes.toString(),
               ),
-            )
-          ],
-        ),
+          child: IconButton(
+            icon: Icon(Icons.shopping_cart),
+            onPressed: () {
+              Navigator.of(context).pushNamed(CartPage.routeName);
+            },
+          ),
+        )
+      ],
+    );
+    
+    return Scaffold(
+        appBar: appBar,
+        drawer: MainDrawer(
+            MediaQuery.of(context).padding.top + appBar.preferredSize.height),
         body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: ProductsGrid(_showFavorite),

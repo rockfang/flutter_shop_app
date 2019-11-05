@@ -4,16 +4,20 @@ import '../providers/cart.dart' show Cart;
 import '../widgets/cart_item.dart' as ct;
 import '../providers/orders.dart';
 import '../pages/orders_page.dart';
+import '../widgets/main_drawer.dart';
 
 class CartPage extends StatelessWidget {
   static final routeName = '/cart-page';
   @override
   Widget build(BuildContext context) {
     final cart = Provider.of<Cart>(context);
+    final appBar = AppBar(
+      title: Text('cart page'),
+    );
     return Scaffold(
-      appBar: AppBar(
-        title: Text('cart page'),
-      ),
+      appBar: appBar,
+      drawer: MainDrawer(
+          MediaQuery.of(context).padding.top + appBar.preferredSize.height),
       body: Column(
         children: <Widget>[
           Card(
