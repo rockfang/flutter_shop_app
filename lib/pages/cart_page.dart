@@ -11,13 +11,11 @@ class CartPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cart = Provider.of<Cart>(context);
-    final appBar = AppBar(
-      title: Text('cart page'),
-    );
     return Scaffold(
-      appBar: appBar,
-      drawer: MainDrawer(
-          MediaQuery.of(context).padding.top + appBar.preferredSize.height),
+      appBar: AppBar(
+        title: Text('cart page'),
+      ),
+      drawer: MainDrawer(),
       body: Column(
         children: <Widget>[
           Card(

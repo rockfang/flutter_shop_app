@@ -1,37 +1,32 @@
 import 'package:flutter/material.dart';
 
 class MainDrawer extends StatelessWidget {
-  final double titleHeight;
-  MainDrawer(this.titleHeight);
   @override
   Widget build(BuildContext context) {
     return Drawer(
       child: Column(
         children: <Widget>[
-          Container(
-            width: double.infinity,
-            height: titleHeight,
-            padding: EdgeInsets.all(8),
-            color: Theme.of(context).primaryColor,
-            alignment: Alignment.center,
-            child: Text(
-              'hello friend',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
+          AppBar(
+            title: Text('hello friend'),
+            automaticallyImplyLeading: false,//去掉标题栏的返回箭头按钮
           ),
+          Divider(),
           ListTile(
             leading: Icon(Icons.shop),
             title: Text('Shop market'),
-            onTap: (){
-              Navigator.of(context).pushNamed('/');
+            onTap: () {
+              Navigator.of(context).pushReplacementNamed('/');
             },
           ),
           SizedBox(
             height: 10,
           ),
           ListTile(
-            leading: Icon(Icons.shop),
+            leading: Icon(Icons.payment),
             title: Text('Shop market'),
+            onTap: () {
+              Navigator.of(context).pushReplacementNamed('/');
+            },
           ),
         ],
       ),
