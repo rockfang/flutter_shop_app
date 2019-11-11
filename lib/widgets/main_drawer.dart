@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import '../pages/user_products_page.dart';
 class MainDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -26,6 +26,16 @@ class MainDrawer extends StatelessWidget {
             title: Text('Shop market'),
             onTap: () {
               Navigator.of(context).pushReplacementNamed('/');
+            },
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          ListTile(
+            leading: Icon(Icons.edit),
+            title: Text('products manager'),
+            onTap: () {
+              Navigator.of(context).pushReplacementNamed(UserProductsPage.routeName);
             },
           ),
         ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/cart.dart';
+
 class CartItem extends StatelessWidget {
   final String productMapId;
   final String id;
@@ -8,7 +9,7 @@ class CartItem extends StatelessWidget {
   final double price;
   final int quantity;
 
-  CartItem(this.productMapId,this.id,this.title, this.price, this.quantity);
+  CartItem(this.productMapId, this.id, this.title, this.price, this.quantity);
   @override
   Widget build(BuildContext context) {
     return Dismissible(
@@ -17,12 +18,35 @@ class CartItem extends StatelessWidget {
       background: Container(
         color: Theme.of(context).errorColor,
         margin: EdgeInsets.symmetric(vertical: 10),
-        padding: EdgeInsets.only(right:10),
+        padding: EdgeInsets.only(right: 10),
         child: Icon(Icons.delete),
         alignment: Alignment.centerRight,
       ),
-      onDismissed: (direction){
-        Provider.of<Cart>(context,listen: false).removeOneProduct(productMapId);
+      onDismissed: (direction) {
+        Provider.of<Cart>(context, listen: false)
+            .removeOneProduct(productMapId);
+      },
+      confirmDismiss: (direction) {
+        return showDialog(
+            context: context,
+            builder: (ctx) => AlertDialog(
+                  title: Text('将该商品移出购物车？'),
+                  content: Text('移除购物车'),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text('确认'),
+                      onPressed: () {
+                        Navigator.pop(context, true);
+                      },
+                    ),
+                    FlatButton(
+                      child: Text('取消'),
+                      onPressed: () {
+                        Navigator.pop(context, false);
+                      },
+                    ),
+                  ],
+                ));
       },
       child: Card(
         margin: EdgeInsets.symmetric(vertical: 10, horizontal: 8),

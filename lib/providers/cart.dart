@@ -23,8 +23,8 @@ class Cart with ChangeNotifier {
   }
 
   double get totalAmount {
-    var amount =0.0;
-    _items.forEach((key,item) {
+    var amount = 0.0;
+    _items.forEach((key, item) {
       amount += item.price * item.quantity;
     });
     return amount;
@@ -42,9 +42,28 @@ class Cart with ChangeNotifier {
     }
     notifyListeners();
   }
-
+  //删除整个商品
   void removeOneProduct(String id) {
     _items.remove(id);
+    notifyListeners();
+  }
+
+  ///删除1件商品
+  void removeOnePiece(String id) {
+    if (!_items.containsKey(id)) {
+      return;
+    }
+    if (_items[id].quantity > 1) {
+      _items.update(
+          id,
+          (item) => CartItem(
+              id: id,
+              price: item.price,
+              title: item.title,
+              quantity: item.quantity - 1));
+    } else {
+      _items.remove(id);
+    }
     notifyListeners();
   }
 

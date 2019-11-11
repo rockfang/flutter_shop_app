@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/product.dart';
 import '../providers/cart.dart';
 import '../pages/product_detail_page.dart';
+
 class ProductItem extends StatefulWidget {
   @override
   _ProductItemState createState() => _ProductItemState();
@@ -43,11 +44,22 @@ class _ProductItemState extends State<ProductItem> {
                         product.toggleFavoriteStatus();
                       },
                     )),
-            trailing:  IconButton(
+            trailing: IconButton(
               icon: const Icon(Icons.shopping_cart),
               color: Theme.of(context).accentColor,
               onPressed: () {
                 cart.addOneItem(product.id, product.title, product.price);
+                Scaffold.of(context).hideCurrentSnackBar();
+                Scaffold.of(context).showSnackBar(SnackBar(
+                  content: Text('已加入购物车'),
+                  duration: Duration(seconds: 3),
+                  action: SnackBarAction(
+                    label: '撤销',
+                    onPressed: () {
+                      cart.removeOnePiece(product.id);
+                    },
+                  ),
+                ));
               },
             ),
           ),
