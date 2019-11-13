@@ -22,7 +22,6 @@ class _ProductsOverviewPageState extends State<ProductsOverviewPage> {
     return Scaffold(
         appBar: AppBar(
           title: Text("购物吧"),
-          automaticallyImplyLeading: false,
           actions: <Widget>[
             PopupMenuButton(
                 onSelected: (value) {
