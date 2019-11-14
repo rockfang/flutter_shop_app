@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../providers/product.dart';
+import '../providers/products.dart';
 
 class EditProductPage extends StatefulWidget {
   static const routeName = 'edit-product-page';
-
   @override
   _EditProductPageState createState() => _EditProductPageState();
 }
@@ -16,13 +17,9 @@ class _EditProductPageState extends State<EditProductPage> {
 
   ///定义globalKey 用于Form中的表单提交
   final _form = GlobalKey<FormState>();
-  var _editProduct = Product(
-      id: null,
-      price: 0,
-      title: '',
-      imageUrl: '',
-      description: '',
-      isFavorite: false);
+  var isInitiated = false;
+  Product _editProduct;
+  String productId;
 
   @override
   void initState() {
@@ -31,18 +28,44 @@ class _EditProductPageState extends State<EditProductPage> {
     super.initState();
   }
 
+  @override
+  void didChangeDependencies() {
+    // 初始化需要通过context拿到的数据
+    if (!isInitiated) {
+      productId = ModalRoute.of(context).settings.arguments as String;
+      if (productId == null) {
+        print(productId);
+        _editProduct = Product(
+            id: null,
+            price: 0,
+            title: '',
+            imageUrl: '',
+            description: '',
+            isFavorite: false);
+      } else {
+        print(productId);
+        _editProduct = Provider.of<Products>(context).getProductById(productId);
+        _imageUrlController.text = _editProduct.imageUrl;
+      }
+      isInitiated = true;
+    }
+    super.didChangeDependencies();
+  }
+
   void updateUrl() {
     // 失去焦点时更新url
     if (!_imageUrlFocusNode.hasFocus) {
-       
-      if(_imageUrlController.text.isEmpty) {
-          return ;
+      if (_imageUrlController.text.isEmpty) {
+        return;
       }
-      if(!_imageUrlController.text.startsWith('http') || _imageUrlController.text.startsWith('https')) {
-          return ;
+      if (!_imageUrlController.text.startsWith('http') ||
+          _imageUrlController.text.startsWith('https')) {
+        return;
       }
-      if(_imageUrlController.text.indexOf('.jpg') == -1 && _imageUrlController.text.indexOf('.png') == -1 && _imageUrlController.text.indexOf('.jpeg') == -1) {
-          return ;
+      if (_imageUrlController.text.indexOf('.jpg') == -1 &&
+          _imageUrlController.text.indexOf('.png') == -1 &&
+          _imageUrlController.text.indexOf('.jpeg') == -1) {
+        return;
       }
       setState(() {});
     }
@@ -50,11 +73,18 @@ class _EditProductPageState extends State<EditProductPage> {
 
   void saveForm() {
     bool isValidate = _form.currentState.validate();
-    if(!isValidate) {
+    if (!isValidate) {
       return;
     }
     //通过globalKey提交表单，会触发表单每个TextFormField的onSaved方法
     _form.currentState.save();
+
+    if (productId != null && productId.isNotEmpty) {
+      Provider.of<Products>(context, listen: false).updateProduct(_editProduct);
+    } else {
+      Provider.of<Products>(context, listen: false).addProduct(_editProduct);
+    }
+    Navigator.of(context).pop();
   }
 
   @override
@@ -94,8 +124,9 @@ class _EditProductPageState extends State<EditProductPage> {
                 onFieldSubmitted: (_) {
                   FocusScope.of(context).requestFocus(_priceFocusNode);
                 },
+                initialValue: _editProduct.title,
                 validator: (value) {
-                  if(value.isEmpty) {
+                  if (value.isEmpty) {
                     return '标题不能为空';
                   }
                   return null;
@@ -115,9 +146,7 @@ class _EditProductPageState extends State<EditProductPage> {
                 textInputAction: TextInputAction.next, //指定输入框"完成"按钮的类型
                 keyboardType: TextInputType.number,
                 focusNode: _priceFocusNode,
-                onFieldSubmitted: (_) {
-                  FocusScope.of(context).requestFocus(_descFocusNode);
-                },
+                onFieldSubmitted: (_) {FocusScope.of(context).requestFocus(_descFocusNode);},
                 onSaved: (price) {
                   _editProduct = Product(
                       id: _editProduct.id,
@@ -127,14 +156,17 @@ class _EditProductPageState extends State<EditProductPage> {
                       isFavorite: _editProduct.isFavorite,
                       description: _editProduct.description);
                 },
+                initialValue: _editProduct.price == 0
+                    ? ''
+                    : _editProduct.price.toString(),
                 validator: (price) {
-                  if(price.isEmpty) {
+                  if (price.isEmpty) {
                     return '价格不能为空';
                   }
-                  if(double.tryParse(price) == null) {
+                  if (double.tryParse(price) == null) {
                     return '价格须为数字';
                   }
-                  if(double.parse(price) <= 0) {
+                  if (double.parse(price) <= 0) {
                     return '价格须大于0';
                   }
                   return null;
@@ -146,11 +178,12 @@ class _EditProductPageState extends State<EditProductPage> {
                 keyboardType: TextInputType.multiline,
                 focusNode: _descFocusNode,
                 validator: (desc) {
-                  if(desc.isEmpty) {
+                  if (desc.isEmpty) {
                     return '描述不能为空';
                   }
                   return null;
                 },
+                initialValue: _editProduct.description,
                 onSaved: (description) {
                   _editProduct = Product(
                       id: _editProduct.id,
@@ -188,14 +221,17 @@ class _EditProductPageState extends State<EditProductPage> {
                         saveForm();
                       },
                       validator: (imgUrl) {
-                        if(imgUrl.isEmpty) {
-                            return '图片地址不能为空';
+                        if (imgUrl.isEmpty) {
+                          return '图片地址不能为空';
                         }
-                        if(!imgUrl.startsWith('http') || !imgUrl.startsWith('https')) {
-                            return '图片地址不合法';
+                        if (!imgUrl.startsWith('http') ||
+                            !imgUrl.startsWith('https')) {
+                          return '图片地址不合法';
                         }
-                        if(imgUrl.indexOf('.jpg') == -1 && imgUrl.indexOf('.png') == -1 && imgUrl.indexOf('.jpeg') == -1) {
-                            return '图片地址不合法';
+                        if (imgUrl.indexOf('.jpg') == -1 &&
+                            imgUrl.indexOf('.png') == -1 &&
+                            imgUrl.indexOf('.jpeg') == -1) {
+                          return '图片地址不合法';
                         }
                         return null;
                       },

@@ -42,19 +42,38 @@ class Products with ChangeNotifier {
   ];
 
   List<Product> get items {
-      return [...itemList];
+    return [...itemList];
   }
 
-   List<Product> get favoriteItems {
-      return itemList.where((item) => item.isFavorite).toList();
+  List<Product> get favoriteItems {
+    return itemList.where((item) => item.isFavorite).toList();
   }
 
   Product getProductById(String id) {
     return items.firstWhere((item) => item.id == id);
   }
 
-  void addProduct() {
-    // _items.add(value);
+  void addProduct(Product product) {
+    itemList.add(Product(
+        id: DateTime.now().toString(),
+        title: product.title,
+        description: product.description,
+        imageUrl: product.imageUrl,
+        price: product.price,
+        isFavorite: product.isFavorite));
+    notifyListeners();
+  }
+
+  void updateProduct(Product product) {
+    int index = itemList.indexWhere((item) => item.id == product.id);
+    if (index >= 0) {
+      itemList[index] = product;
+    }
+    notifyListeners();
+  }
+
+  void deleteProductById(String id) {
+    itemList.removeWhere((item) => item.id == id);
     notifyListeners();
   }
 }
