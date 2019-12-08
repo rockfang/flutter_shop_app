@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'dart:io';
+import 'package:http/http.dart' as http;
 import './product.dart';
 
 class Products with ChangeNotifier {
@@ -54,22 +57,54 @@ class Products with ChangeNotifier {
   }
 
   void addProduct(Product product) {
-    itemList.add(Product(
-        id: DateTime.now().toString(),
-        title: product.title,
-        description: product.description,
-        imageUrl: product.imageUrl,
-        price: product.price,
-        isFavorite: product.isFavorite));
-    notifyListeners();
+    const url = 'http://106.15.233.83:3010/shoprepo/addProduct';
+    http.post(url, headers: {
+      "Content-Type": "application/json"
+    }, body: {
+      "id": DateTime.now().toString(),
+      "title": product.title,
+      "description": product.description,
+      "imageUrl": product.imageUrl,
+      "price": product.price,
+      "isFavorite": product.isFavorite
+    }).then((response) {
+      var result = json.decode(response.body);
+      if (result.success) {
+        itemList.add(Product(
+            id: DateTime.now().toString(),
+            title: product.title,
+            description: product.description,
+            imageUrl: product.imageUrl,
+            price: product.price,
+            isFavorite: product.isFavorite));
+        notifyListeners();
+      }
+    });
   }
 
-  void updateProduct(Product product) {
-    int index = itemList.indexWhere((item) => item.id == product.id);
-    if (index >= 0) {
-      itemList[index] = product;
+  Future<void> updateProduct(Product product) async {
+    //hacker 把数据存入服务端，插入方式，delete later
+    const url = 'http://106.15.233.83:3010/shoprepo/addProduct';
+    var response = await http.post(url,
+        headers: {"Content-type": "application/json"},
+        body: json.encode({
+          "id": product.id,
+          "title": product.title,
+          "isFavorite": product.isFavorite,
+          "description": product.description,
+          "price": product.price,
+          "imageUrl": product.imageUrl,
+        }));
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+    var result = json.decode(response.body);
+    if (result.success) {
+      int index = itemList.indexWhere((item) => item.id == product.id);
+      if (index >= 0) {
+        itemList[index] = product;
+      }
+      notifyListeners();
     }
-    notifyListeners();
   }
 
   void deleteProductById(String id) {

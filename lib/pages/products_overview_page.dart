@@ -50,7 +50,7 @@ class _ProductsOverviewPageState extends State<ProductsOverviewPage> {
                 onPressed: () {
                   Navigator.of(context).pushNamed(CartPage.routeName);
                 },
-              ),
+              ), 
             )
           ],
         ),
