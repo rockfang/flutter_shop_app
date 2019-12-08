@@ -58,18 +58,21 @@ class Products with ChangeNotifier {
 
   void addProduct(Product product) {
     const url = 'http://106.15.233.83:3010/shoprepo/addProduct';
-    http.post(url, headers: {
-      "Content-Type": "application/json"
-    }, body: {
-      "id": DateTime.now().toString(),
-      "title": product.title,
-      "description": product.description,
-      "imageUrl": product.imageUrl,
-      "price": product.price,
-      "isFavorite": product.isFavorite
-    }).then((response) {
+    http
+        .post(url,
+            headers: {"Content-Type": "application/json"},
+            body: json.encode({
+              "id": DateTime.now().toString(),
+              "title": product.title,
+              "description": product.description,
+              "imageUrl": product.imageUrl,
+              "price": product.price,
+              "isFavorite": product.isFavorite
+            }))
+        .then((response) {
       var result = json.decode(response.body);
-      if (result.success) {
+      print('Response body: $result');
+      if (result['success']) {
         itemList.add(Product(
             id: DateTime.now().toString(),
             title: product.title,
@@ -98,7 +101,7 @@ class Products with ChangeNotifier {
     print('Response status: ${response.statusCode}');
     print('Response body: ${response.body}');
     var result = json.decode(response.body);
-    if (result.success) {
+    if (result['success']) {
       int index = itemList.indexWhere((item) => item.id == product.id);
       if (index >= 0) {
         itemList[index] = product;
