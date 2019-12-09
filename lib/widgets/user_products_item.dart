@@ -7,7 +7,7 @@ class UserProductsItem extends StatelessWidget {
   final String id;
   final String imageUrl;
   final String title;
-  UserProductsItem(this.id,this.imageUrl, this.title);
+  UserProductsItem(this.id, this.imageUrl, this.title);
   @override
   Widget build(BuildContext context) {
     return ListTile(
@@ -23,7 +23,8 @@ class UserProductsItem extends StatelessWidget {
                 icon: Icon(Icons.edit),
                 color: Theme.of(context).primaryColor,
                 onPressed: () {
-                  Navigator.of(context).pushNamed(EditProductPage.routeName,arguments: id);
+                  Navigator.of(context)
+                      .pushNamed(EditProductPage.routeName, arguments: id);
                 },
               ),
               IconButton(
@@ -32,7 +33,12 @@ class UserProductsItem extends StatelessWidget {
                 ),
                 color: Theme.of(context).errorColor,
                 onPressed: () {
-                  Provider.of<Products>(context,listen: false).deleteProductById(id);
+                  Provider.of<Products>(context, listen: false)
+                      .deleteProductById(id)
+                      .then((_) {
+                    Scaffold.of(context).showSnackBar(SnackBar(
+                        content: Text('删除失败'), duration: Duration(seconds: 3)));
+                  });
                 },
               )
             ],
