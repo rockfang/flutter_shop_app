@@ -91,11 +91,6 @@ class _EditProductPageState extends State<EditProductPage> {
       } catch (error) {
         Scaffold.of(context).showSnackBar(
             SnackBar(content: Text('更新失败'), duration: Duration(seconds: 3)));
-      } finally {
-        setState(() {
-          isLoading = false;
-        });
-        Navigator.of(context).pop();
       }
     } else {
       try {
@@ -116,13 +111,13 @@ class _EditProductPageState extends State<EditProductPage> {
                     )
                   ],
                 ));
-      } finally {
-        setState(() {
-          isLoading = false;
-        });
-        Navigator.of(context).pop();
       }
     }
+
+    setState(() {
+      isLoading = false;
+    });
+    Navigator.of(context).pop();
   }
 
   @override
