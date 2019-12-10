@@ -10,6 +10,15 @@ class CartItem {
       @required this.title,
       @required this.price,
       @required this.quantity});
+  ///方便json.encode 传递数据
+  Map toJson() {
+    return {
+      "id": id,
+      "title": title,
+      "price": price,
+      "quantity": quantity,
+    };
+  }
 }
 
 class Cart with ChangeNotifier {
@@ -42,6 +51,7 @@ class Cart with ChangeNotifier {
     }
     notifyListeners();
   }
+
   //删除整个商品
   void removeOneProduct(String id) {
     _items.remove(id);

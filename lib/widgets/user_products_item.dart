@@ -10,6 +10,7 @@ class UserProductsItem extends StatelessWidget {
   UserProductsItem(this.id, this.imageUrl, this.title);
   @override
   Widget build(BuildContext context) {
+    final scaffold = Scaffold.of(context);
     return ListTile(
         leading: CircleAvatar(
           backgroundImage: NetworkImage(imageUrl),
@@ -36,11 +37,10 @@ class UserProductsItem extends StatelessWidget {
                   Provider.of<Products>(context, listen: false)
                       .deleteProductById(id)
                       .then((_) {
-                    Scaffold.of(context).showSnackBar(SnackBar(
+                    scaffold.showSnackBar(SnackBar(
                         content: Text('删除成功'), duration: Duration(seconds: 2)));
                   }).catchError((error) {
-                    print("error:" + error.toString());
-                    Scaffold.of(context).showSnackBar(SnackBar(
+                    scaffold.showSnackBar(SnackBar(
                         content: Text('删除失败'), duration: Duration(seconds: 2)));
                   });
                 },

@@ -114,7 +114,7 @@ class Products with ChangeNotifier {
     notifyListeners();
     var response = await http.post(url,
         headers: {"Content-type": "application/json"},
-        body: json.encode({"id": "id"}));
+        body: json.encode({"id": id}));
     var result = json.decode(response.body);
     print("result:" + response.body);
     if (!result['success']) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../pages/orders_page.dart';
 import '../pages/user_products_page.dart';
 class MainDrawer extends StatelessWidget {
   @override
@@ -23,9 +24,9 @@ class MainDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: Icon(Icons.payment),
-            title: Text('Shop market'),
+            title: Text('Orders'),
             onTap: () {
-              Navigator.of(context).pushReplacementNamed('/');
+              Navigator.of(context).pushReplacementNamed(OrdersPage.routeName);
             },
           ),
           SizedBox(
