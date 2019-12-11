@@ -30,23 +30,23 @@ class Orders with ChangeNotifier {
         url,
         headers: {"Content-type": "application/json"},
       );
-      var result = json.decode(response.body) as Map<String, dynamic>;
+      var result = json.decode(response.body);
       print(result.toString());
       List<OrderItem> orders = [];
       if (result['success']) {
-        var resultOrders = json.decode(result['result']) as List;
+        var resultOrders = result['result'];
         resultOrders.forEach((item) {
-          var itemProducts = json.decode(item['products']) as List;
+          var itemProducts = item['products'];
           List<CartItem> cartItems = []; 
           itemProducts.forEach((i) {
               cartItems.add(CartItem(id: i['id'],
-              price: i['price'],
+              price: i['price'] * 1.0,
               title: i['title'],
               quantity: i['quantity']));
           });
           orders.add(OrderItem(
               id: item['id'],
-              amount: item['amount'],
+              amount: item['amount'] * 1.0,
               orderTime: item['orderTime'],
               products: cartItems));
         });

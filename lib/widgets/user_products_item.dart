@@ -37,9 +37,11 @@ class UserProductsItem extends StatelessWidget {
                   Provider.of<Products>(context, listen: false)
                       .deleteProductById(id)
                       .then((_) {
+                    scaffold.hideCurrentSnackBar();
                     scaffold.showSnackBar(SnackBar(
                         content: Text('删除成功'), duration: Duration(seconds: 2)));
                   }).catchError((error) {
+                    scaffold.hideCurrentSnackBar();
                     scaffold.showSnackBar(SnackBar(
                         content: Text('删除失败'), duration: Duration(seconds: 2)));
                   });
