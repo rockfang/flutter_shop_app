@@ -62,7 +62,7 @@ class Orders with ChangeNotifier {
   Future<void> addOrder(double amount, List<CartItem> products) async {
     const url = 'http://106.15.233.83:3010/orders/addOrder';
     try {
-      String id = DateTime.now().toString();
+      String id = DateTime.now().millisecondsSinceEpoch.toString();
       String orderTime = DateTime.now().toString();
       var response = await http.post(url,
           headers: {"Content-type": "application/json"},
