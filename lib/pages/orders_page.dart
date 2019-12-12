@@ -12,9 +12,21 @@ class OrdersPage extends StatefulWidget {
 }
 
 class _OrdersPageState extends State<OrdersPage> {
+  var isLoading = false;
+
+  Future<void> reqOrders() async {
+    setState(() {
+      isLoading = true;
+    });
+    await Provider.of<Orders>(context, listen: false).getOrders();
+    setState(() {
+      isLoading = false;
+    });
+  }
+
   @override
   void initState() {
-    Provider.of<Orders>(context, listen: false).getOrders();
+    reqOrders();
     super.initState();
   }
 
@@ -26,13 +38,17 @@ class _OrdersPageState extends State<OrdersPage> {
         title: Text('orders page'),
       ),
       drawer: MainDrawer(),
-      body: orderData.orders.length == 0
-          ? Center(
-              child: Text("当前暂无订单信息"),
-            )
-          : ListView.builder(
-              itemCount: orderData.orders.length,
-              itemBuilder: (ctx, index) => OrderItem(orderData.orders[index])),
+      body: RefreshIndicator(
+        child: (orderData.orders.length == 0
+            ? Center(
+                child: Text("当前暂无订单信息"),
+              )
+            : ListView.builder(
+                itemCount: orderData.orders.length,
+                itemBuilder: (ctx, index) =>
+                    OrderItem(orderData.orders[index]))),
+        onRefresh: reqOrders,
+      ),
     );
   }
 }
