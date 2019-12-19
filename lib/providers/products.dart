@@ -50,18 +50,18 @@ class Products with ChangeNotifier {
   Future<void> addProduct(Product product) async {
     const url = 'http://106.15.233.83:3010/shoprepo/addProduct';
     try {
-      var response = await http.post(url,
-          headers: {"Content-Type": "application/json"},
-          body: json.encode({
-            "id": DateTime.now().toString(),
-            "title": product.title,
-            "description": product.description,
-            "imageUrl": product.imageUrl,
-            "price": product.price,
-            "isFavorite": product.isFavorite
-          }));
+var response = await http.post(url,
+    headers: {"Content-Type": "application/json"},
+    body: json.encode({
+      "id": DateTime.now().toString(),
+      "title": product.title,
+      "description": product.description,
+      "imageUrl": product.imageUrl,
+      "price": product.price,
+      "isFavorite": product.isFavorite
+    }));
 
-      var result = json.decode(response.body);
+var result = json.decode(response.body);
       print('Response body: $result');
       if (result['success']) {
         itemList.add(Product(
