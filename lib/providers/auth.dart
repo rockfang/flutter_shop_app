@@ -8,8 +8,17 @@ class Auth with ChangeNotifier {
   DateTime _expireDat;
   String _userid;
 
+  bool isAuth() {
+    return token != null;
+  }
+
   String get token {
-    return _token;
+    if (_token != null &&
+        _expireDat != null &&
+        _expireDat.isAfter(DateTime.now())) {
+      return _token;
+    }
+    return null;
   }
 
   Future<void> login(email, password) async {
@@ -19,11 +28,15 @@ class Auth with ChangeNotifier {
       print(response.data);
       if (response.data['success']) {
         _token = response.data['token'];
+        _userid = response.data['userid'];
+        _expireDat = DateTime.now().add(Duration(seconds: response.data['expireInt']));
         DioHttp.setToken(_token);
+        notifyListeners();
       } else {
-        throw HttpException(response.data["msg"]);
+        throw HttpException(response.data["message"]);
       }
     } catch (error) {
+      print(error);
       throw error;
     }
   }
@@ -34,7 +47,7 @@ class Auth with ChangeNotifier {
           .post('/user/reg', data: {"email": email, "password": password});
       print(response.data);
       if (!response.data['success']) {
-        throw HttpException(response.data["msg"]);
+        throw HttpException(response.data["message"]);
       }
     } catch (error) {
       throw error;

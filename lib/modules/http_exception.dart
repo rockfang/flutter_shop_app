@@ -1,6 +1,6 @@
 class HttpException implements Exception {
   String message;
-  HttpException(message);
+  HttpException(this.message);
 
   @override
   String toString() {

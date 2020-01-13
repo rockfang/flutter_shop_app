@@ -141,7 +141,7 @@ class _AuthCardState extends State<AuthCard> {
             .signUp(_authData['email'], _authData['password']);
       }
     } on HttpException catch (error) {
-      showSnack(context,error);
+      showSnack(context,error.toString());
     } catch (error) {
       showSnack(context,'请求异常');
     }
