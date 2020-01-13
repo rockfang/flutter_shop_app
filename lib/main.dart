@@ -10,6 +10,8 @@ import './pages/orders_page.dart';
 import './pages/edit_product_page.dart';
 import './pages/user_products_page.dart';
 import './pages/auth_page.dart';
+
+import './providers/auth.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -23,6 +25,8 @@ class MyApp extends StatelessWidget {
           value: Cart(),
         ),ChangeNotifierProvider.value(
           value: Orders(),
+        ),ChangeNotifierProvider.value(
+          value: Auth(),
         ),
       ],
       child: MaterialApp(
@@ -40,6 +44,7 @@ class MyApp extends StatelessWidget {
           UserProductsPage.routeName: (ctx) => UserProductsPage(),
           EditProductPage.routeName: (ctx) => EditProductPage(),
           AuthPage.routeName: (ctx) => AuthPage(),
+          ProductsOverviewPage.routeName: (ctx) => ProductsOverviewPage(),
         },
       ),
     );

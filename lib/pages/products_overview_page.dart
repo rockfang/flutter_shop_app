@@ -10,6 +10,8 @@ import '../providers/products.dart';
 enum PopMenuOptions { favorite, all }
 
 class ProductsOverviewPage extends StatefulWidget {
+static const routeName = "products-overview-page";
+
   @override
   _ProductsOverviewPageState createState() => _ProductsOverviewPageState();
 }

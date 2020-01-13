@@ -1,6 +1,10 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/auth.dart';
+import 'products_overview_page.dart';
+import '../modules/http_exception.dart';
 
 enum AuthMode { Signup, Login }
 
@@ -100,7 +104,14 @@ class _AuthCardState extends State<AuthCard> {
   var _isLoading = false;
   final _passwordController = TextEditingController();
 
-  void _submit() {
+   void showSnack(context, msg) {
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text(msg),
+        duration: Duration(seconds: 2),
+      ));
+    }
+
+  Future<void> _submit() async {
     if (!_formKey.currentState.validate()) {
       // Invalid!
       return;
@@ -109,11 +120,32 @@ class _AuthCardState extends State<AuthCard> {
     setState(() {
       _isLoading = true;
     });
-    if (_authMode == AuthMode.Login) {
-      // Log user in
-    } else {
-      // Sign user up
+    // if (success) {
+    //       Navigator.of(context)
+    //           .pushReplacementNamed(ProductsOverviewPage.routeName);
+    //     } else {
+    //       Scaffold.of(context).showSnackBar(SnackBar(
+    //         content: Text(msg),
+    //         duration: Duration(seconds: 2),
+    //       ));
+    //     }
+
+    try {
+      if (_authMode == AuthMode.Login) {
+        // Log user in
+        await Provider.of<Auth>(context)
+            .login(_authData['email'], _authData['password']);
+      } else {
+        // Sign user up
+        await Provider.of<Auth>(context)
+            .signUp(_authData['email'], _authData['password']);
+      }
+    } on HttpException catch (error) {
+      showSnack(context,error);
+    } catch (error) {
+      showSnack(context,'请求异常');
     }
+
     setState(() {
       _isLoading = false;
     });
