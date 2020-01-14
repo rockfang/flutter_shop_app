@@ -21,16 +21,19 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
         providers: [
           ChangeNotifierProvider.value(
-            value: Products(),
+            value: Auth(),
           ),
+          ChangeNotifierProxyProvider<Auth, Products>(
+            create: (ctx) => Products('', null),
+            update: (ctx, auth, previousProducts) =>
+                Products(auth.token, previousProducts?.itemList),
+          ),
+          //ChangeNotifierProvider.value(value: Products(),),
           ChangeNotifierProvider.value(
             value: Cart(),
           ),
           ChangeNotifierProvider.value(
             value: Orders(),
-          ),
-          ChangeNotifierProvider.value(
-            value: Auth(),
           ),
         ],
         child: Consumer<Auth>(
@@ -41,7 +44,22 @@ class MyApp extends StatelessWidget {
               accentColor: Colors.deepOrange,
               fontFamily: 'Lato',
             ),
-            home: authData.isAuth() ? ProductsOverviewPage() : AuthPage(),
+            home: FutureBuilder(
+              future: authData.reloadToken(),
+              builder: (ctx, dataSnapshot) {
+                if (dataSnapshot.connectionState == ConnectionState.done) {
+                  if (authData.isAuth()) {
+                    return ProductsOverviewPage();
+                  }
+                  return AuthPage();
+                } else {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              },
+            ),
+            //home: authData.isAuth() ? ProductsOverviewPage() : AuthPage(),
             routes: {
               ProductDetailPage.routeName: (ctx) => ProductDetailPage(),
               CartPage.routeName: (ctx) => CartPage(),

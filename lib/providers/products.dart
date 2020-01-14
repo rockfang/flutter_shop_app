@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
 import 'dart:io';
-import 'package:http/http.dart' as http;
+import '../tools/diohttp.dart';
 import './product.dart';
 import '../modules/http_exception.dart';
 
@@ -16,17 +15,21 @@ class Products with ChangeNotifier {
     return itemList.where((item) => item.isFavorite).toList();
   }
 
+  //测试 用
+  final _token;
+  Products(this._token,itemList);
+
   Product getProductById(String id) {
     return items.firstWhere((item) => item.id == id);
   }
 
   Future<void> fetchProduts() async {
-    const url = 'http://106.15.233.83:3010/shoprepo/';
+    print('in products token:$_token');
     try {
-      var response =
-          await http.get(url, headers: {"Content-Type": "application/json"});
-      var extractData = json.decode(response.body) as Map<String, dynamic>;
+      var response = await DioHttp.getDio().get('shoprepo/');
+      var extractData = response.data;
       final List<Product> responseList = [];
+      print("extractData:$extractData");
       if (extractData['success']) {
         List productsData = extractData['result'] as List;
         productsData.forEach((item) {
@@ -43,25 +46,23 @@ class Products with ChangeNotifier {
         notifyListeners();
       }
     } catch (error) {
+      print(error);
       throw error;
     }
   }
 
   Future<void> addProduct(Product product) async {
-    const url = 'http://106.15.233.83:3010/shoprepo/addProduct';
     try {
-      var response = await http.post(url,
-          headers: {"Content-Type": "application/json"},
-          body: json.encode({
-            "id": DateTime.now().toString(),
-            "title": product.title,
-            "description": product.description,
-            "imageUrl": product.imageUrl,
-            "price": product.price,
-            "isFavorite": product.isFavorite
-          }));
+      var response = await DioHttp.getDio().post('shoprepo/addProduct', data: {
+        "id": DateTime.now().toString(),
+        "title": product.title,
+        "description": product.description,
+        "imageUrl": product.imageUrl,
+        "price": product.price,
+        "isFavorite": product.isFavorite
+      });
 
-      var result = json.decode(response.body);
+      var result = response.data;
       print('Response body: $result');
       if (result['success']) {
         itemList.add(Product(
@@ -74,24 +75,23 @@ class Products with ChangeNotifier {
         notifyListeners();
       }
     } catch (error) {
+      print(error);
       throw error;
     }
   }
 
   Future<void> updateProduct(Product product) async {
-    const url = 'http://106.15.233.83:3010/shoprepo/updateProduct';
     try {
-      var response = await http.post(url,
-          headers: {"Content-type": "application/json"},
-          body: json.encode({
-            "id": product.id,
-            "title": product.title,
-            "isFavorite": product.isFavorite,
-            "description": product.description,
-            "price": product.price,
-            "imageUrl": product.imageUrl,
-          }));
-      var result = json.decode(response.body);
+      var response =
+          await DioHttp.getDio().post('shoprepo/updateProduct', data: {
+        "id": product.id,
+        "title": product.title,
+        "isFavorite": product.isFavorite,
+        "description": product.description,
+        "price": product.price,
+        "imageUrl": product.imageUrl,
+      });
+      var result = response.data;
       if (result['success']) {
         int index = itemList.indexWhere((item) => item.id == product.id);
         if (index >= 0) {
@@ -100,23 +100,22 @@ class Products with ChangeNotifier {
         notifyListeners();
       }
     } catch (error) {
+      print(error);
       throw error;
     }
   }
 
   ///乐观删除
   Future<void> deleteProductById(String id) async {
-    const url = 'http://106.15.233.83:3010/shoprepo/delete';
     int index = itemList.indexWhere((item) => item.id == id);
     Product handleProduct = itemList[index];
 
     itemList.removeAt(index);
     notifyListeners();
-    var response = await http.post(url,
-        headers: {"Content-type": "application/json"},
-        body: json.encode({"id": id}));
-    var result = json.decode(response.body);
-    print("result:" + response.body);
+    var response =
+        await DioHttp.getDio().post('shoprepo/delete', data: {"id": id});
+    var result = response.data;
+    print("result:$result");
     if (!result['success']) {
       itemList.insert(index, handleProduct);
       notifyListeners();

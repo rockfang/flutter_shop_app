@@ -72,7 +72,7 @@ class _EditProductPageState extends State<EditProductPage> {
     }
   }
 
-  Future<void> saveForm() async {
+  Future<void> saveForm(BuildContext ctx) async {
     bool isValidate = _form.currentState.validate();
     if (!isValidate) {
       return null;
@@ -86,10 +86,10 @@ class _EditProductPageState extends State<EditProductPage> {
       try {
         await Provider.of<Products>(context, listen: false)
             .updateProduct(_editProduct);
-        Scaffold.of(context).showSnackBar(
+        Scaffold.of(ctx).showSnackBar(
             SnackBar(content: Text('更新成功'), duration: Duration(seconds: 3)));
       } catch (error) {
-        Scaffold.of(context).showSnackBar(
+        Scaffold.of(ctx).showSnackBar(
             SnackBar(content: Text('更新失败'), duration: Duration(seconds: 3)));
       }
     } else {
@@ -98,7 +98,7 @@ class _EditProductPageState extends State<EditProductPage> {
             .addProduct(_editProduct);
       } catch (error) {
         await showDialog(
-            context: context,
+            context: ctx,
             builder: (ctx) => AlertDialog(
                   title: Text('服务器出小差了'),
                   content: Text('出现了一些未知错误'),
@@ -137,9 +137,13 @@ class _EditProductPageState extends State<EditProductPage> {
       appBar: AppBar(
         title: Text('商品编辑'),
         actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.save),
-            onPressed: saveForm,
+          Builder(
+            builder: (ctx) => IconButton(
+              icon: Icon(Icons.save),
+              onPressed: () {
+                saveForm(ctx);
+              },
+            ),
           )
         ],
       ),
@@ -258,7 +262,7 @@ class _EditProductPageState extends State<EditProductPage> {
                             controller: _imageUrlController,
                             focusNode: _imageUrlFocusNode,
                             onFieldSubmitted: (_) {
-                              saveForm();
+                              //saveForm();
                             },
                             validator: (imgUrl) {
                               if (imgUrl.isEmpty) {
