@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'dart:async';
+import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../tools/diohttp.dart';
 import '../modules/http_exception.dart';
@@ -11,6 +12,7 @@ class Auth with ChangeNotifier {
   Timer autoLoginOutTimer;
 
   bool isAuth() {
+    print("isAuth:$token");
     return token != null;
   }
 
@@ -24,25 +26,34 @@ class Auth with ChangeNotifier {
   }
 
   Future<void> reloadToken() async {
+    print("reloadToken:$_token");
+
     if (_token == null || _token.length == 0) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       try {
-        _token = prefs.getString('token');
-        _expireDat = DateTime.parse(prefs.getString('expireDat'));
-        DioHttp.setToken(_token);
-        notifyListeners();
+        if (prefs.containsKey('tokenMsg')) {
+          var tokenMsg =
+              json.decode(prefs.getString('tokenMsg')) as Map<String, Object>;
+          _token = tokenMsg['token'];
+          _expireDat = DateTime.parse(tokenMsg['expireDat']);
+          DioHttp.setToken(_token);
+          notifyListeners();
+        }
       } catch (error) {
         print("reloadToken error:$error");
       }
     }
-
     autoLoginOut();
   }
 
-  Future<void> _saveTokenMsg(token, expireDat) async {
+  Future<void> _saveTokenMsg() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('token', token);
-    await prefs.setString('expireDat', expireDat);
+    final tokenMsg = json.encode({
+      'token': _token,
+      'expireDat': _expireDat.toIso8601String(),
+      'userid': _userid
+    });
+    await prefs.setString('tokenMsg', tokenMsg);
   }
 
   Future<void> login(email, password) async {
@@ -55,7 +66,7 @@ class Auth with ChangeNotifier {
         _userid = response.data['userid'];
         _expireDat =
             DateTime.now().add(Duration(seconds: response.data['expireInt']));
-        await _saveTokenMsg(_token, _expireDat.toString());
+        await _saveTokenMsg();
         autoLoginOut();
         DioHttp.setToken(_token);
         notifyListeners();
@@ -85,17 +96,20 @@ class Auth with ChangeNotifier {
     _token = null;
     _expireDat = null;
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.remove("token");
-    await prefs.remove("expireDat");
+    if (prefs.containsKey("tokenMsg")) {
+      await prefs.remove("tokenMsg");
+      // await prefs.clear();
+    }
     notifyListeners();
   }
 
   autoLoginOut() {
     if (autoLoginOutTimer != null) {
       autoLoginOutTimer.cancel();
+      autoLoginOutTimer = null;
     }
 
-    if (_expireDat == null) {
+    if (_expireDat == null || _token == null) {
       return;
     }
     print("date0:${_expireDat.toString()}");

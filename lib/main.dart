@@ -10,6 +10,7 @@ import './pages/orders_page.dart';
 import './pages/edit_product_page.dart';
 import './pages/user_products_page.dart';
 import './pages/auth_page.dart';
+import './pages/loading_page.dart';
 
 import './providers/auth.dart';
 
@@ -44,24 +45,14 @@ class MyApp extends StatelessWidget {
               accentColor: Colors.deepOrange,
               fontFamily: 'Lato',
             ),
-            home: FutureBuilder(
-              future: authData.reloadToken(),
-              builder: (ctx, dataSnapshot) {
-                if (dataSnapshot.connectionState == ConnectionState.done) {
-                  if (authData.isAuth()) {
-                    return ProductsOverviewPage();
-                  }
-                  return AuthPage();
-                } else {
-                  return Scaffold(
-                    body: Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  );
-                }
-              },
-            ),
-            //home: authData.isAuth() ? ProductsOverviewPage() : AuthPage(),
+            home: authData.isAuth()
+                ? ProductsOverviewPage()
+                : FutureBuilder(
+                    future: authData.reloadToken(),
+                    builder: (ctx, dataSnapshot) =>
+                        dataSnapshot.connectionState == ConnectionState.done
+                            ? AuthPage()
+                            : LoadingPage()),
             routes: {
               ProductDetailPage.routeName: (ctx) => ProductDetailPage(),
               CartPage.routeName: (ctx) => CartPage(),
