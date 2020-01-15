@@ -53,8 +53,10 @@ class MyApp extends StatelessWidget {
                   }
                   return AuthPage();
                 } else {
-                  return Center(
-                    child: CircularProgressIndicator(),
+                  return Scaffold(
+                    body: Center(
+                      child: CircularProgressIndicator(),
+                    ),
                   );
                 }
               },

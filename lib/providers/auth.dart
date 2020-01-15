@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../tools/diohttp.dart';
 import '../modules/http_exception.dart';
@@ -7,6 +8,7 @@ class Auth with ChangeNotifier {
   var _token;
   DateTime _expireDat;
   String _userid;
+  Timer autoLoginOutTimer;
 
   bool isAuth() {
     return token != null;
@@ -27,12 +29,14 @@ class Auth with ChangeNotifier {
       try {
         _token = prefs.getString('token');
         _expireDat = DateTime.parse(prefs.getString('expireDat'));
-        print('token from sp:$_token');
-        print('_expireDat from sp:$_expireDat');
+        DioHttp.setToken(_token);
+        notifyListeners();
       } catch (error) {
-        print(error);
+        print("reloadToken error:$error");
       }
     }
+
+    autoLoginOut();
   }
 
   Future<void> _saveTokenMsg(token, expireDat) async {
@@ -51,7 +55,8 @@ class Auth with ChangeNotifier {
         _userid = response.data['userid'];
         _expireDat =
             DateTime.now().add(Duration(seconds: response.data['expireInt']));
-        _saveTokenMsg(_token, _expireDat);
+        await _saveTokenMsg(_token, _expireDat.toString());
+        autoLoginOut();
         DioHttp.setToken(_token);
         notifyListeners();
       } else {
@@ -74,5 +79,35 @@ class Auth with ChangeNotifier {
     } catch (error) {
       throw error;
     }
+  }
+
+  Future<void> logout() async {
+    _token = null;
+    _expireDat = null;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove("token");
+    await prefs.remove("expireDat");
+    notifyListeners();
+  }
+
+  autoLoginOut() {
+    if (autoLoginOutTimer != null) {
+      autoLoginOutTimer.cancel();
+    }
+
+    if (_expireDat == null) {
+      return;
+    }
+    print("date0:${_expireDat.toString()}");
+    print("date1:${DateTime.now().toString()}");
+    print(_expireDat.isBefore(DateTime.now()));
+
+    if (_expireDat.isBefore(DateTime.now())) {
+      logout();
+      return;
+    }
+    final expireSeconds = _expireDat.difference(DateTime.now()).inSeconds;
+    print('timer expireSeconds：$expireSeconds');
+    autoLoginOutTimer = Timer(Duration(seconds: expireSeconds), logout);
   }
 }

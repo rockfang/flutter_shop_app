@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../pages/orders_page.dart';
 import '../pages/user_products_page.dart';
+import '../providers/auth.dart';
 class MainDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -37,6 +39,14 @@ class MainDrawer extends StatelessWidget {
             title: Text('products manager'),
             onTap: () {
               Navigator.of(context).pushReplacementNamed(UserProductsPage.routeName);
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.exit_to_app),
+            title: Text('logout'),
+            onTap: () {
+              Provider.of<Auth>(context).logout();
+              Navigator.of(context).pop();
             },
           ),
         ],
