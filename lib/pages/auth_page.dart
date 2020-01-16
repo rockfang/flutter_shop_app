@@ -94,7 +94,8 @@ class AuthCard extends StatefulWidget {
   _AuthCardState createState() => _AuthCardState();
 }
 
-class _AuthCardState extends State<AuthCard> {
+class _AuthCardState extends State<AuthCard>
+    with SingleTickerProviderStateMixin {
   final GlobalKey<FormState> _formKey = GlobalKey();
   AuthMode _authMode = AuthMode.Login;
   Map<String, String> _authData = {
@@ -103,13 +104,40 @@ class _AuthCardState extends State<AuthCard> {
   };
   var _isLoading = false;
   final _passwordController = TextEditingController();
+  //1. 申明动画控制器和动画类
+  AnimationController _animationController;
+  Animation<Size> _heightAnimation;
 
-   void showSnack(context, msg) {
-      Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text(msg),
-        duration: Duration(seconds: 2),
-      ));
-    }
+  @override
+  void initState() {
+    //2. 初始化控制器和动画
+    _animationController =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+    //初始化动画类(指明动画起始位置)，并关联控制器
+    _heightAnimation = Tween<Size>(
+            begin: Size(double.infinity, 260), end: Size(double.infinity, 320))
+        .animate(CurvedAnimation(
+            curve: Curves.easeIn, parent: _animationController));
+    //添加监听设置状态，让动画执行时，页面rebuild，那就要调用setState方法
+    _heightAnimation.addListener(() => setState(() {}));
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    //释放动画控制器
+    _animationController.dispose();
+    _animationController = null;
+    _heightAnimation = null;
+    super.dispose();
+  }
+
+  void showSnack(context, msg) {
+    Scaffold.of(context).showSnackBar(SnackBar(
+      content: Text(msg),
+      duration: Duration(seconds: 2),
+    ));
+  }
 
   Future<void> _submit() async {
     if (!_formKey.currentState.validate()) {
@@ -141,9 +169,9 @@ class _AuthCardState extends State<AuthCard> {
             .signUp(_authData['email'], _authData['password']);
       }
     } on HttpException catch (error) {
-      showSnack(context,error.toString());
+      showSnack(context, error.toString());
     } catch (error) {
-      showSnack(context,'璇锋眰寮傚父');
+                showSnack(context,'è?·?±???????');
     }
 
     setState(() {
@@ -156,10 +184,13 @@ class _AuthCardState extends State<AuthCard> {
       setState(() {
         _authMode = AuthMode.Signup;
       });
+      //控制动画
+      _animationController.forward();
     } else {
       setState(() {
         _authMode = AuthMode.Login;
       });
+      _animationController.reverse();
     }
   }
 
@@ -172,9 +203,10 @@ class _AuthCardState extends State<AuthCard> {
       ),
       elevation: 8.0,
       child: Container(
-        height: _authMode == AuthMode.Signup ? 320 : 260,
-        constraints:
-            BoxConstraints(minHeight: _authMode == AuthMode.Signup ? 320 : 260),
+        // height: _authMode == AuthMode.Signup ? 320 : 260,
+        // 使用动画属性
+        height: _heightAnimation.value.height,
+        constraints: BoxConstraints(minHeight: _heightAnimation.value.height),
         width: deviceSize.width * 0.75,
         padding: EdgeInsets.all(16.0),
         child: Form(
