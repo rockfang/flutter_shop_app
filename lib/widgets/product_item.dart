@@ -21,11 +21,14 @@ class _ProductItemState extends State<ProductItem> {
           Navigator.of(context)
               .pushNamed(ProductDetailPage.routeName, arguments: product.id);
         },
-        child: GridTile(
-          child: Image.network(
-            product.imageUrl,
-            fit: BoxFit.cover,
-          ),
+child: GridTile(
+  child: Hero(
+    child: Image.network(
+      product.imageUrl,
+      fit: BoxFit.cover,
+    ),
+    tag: product.id,
+  ),
           footer: GridTileBar(
             backgroundColor: Colors.black54,
             title: FittedBox(
