@@ -19,8 +19,8 @@ class _OrderItemState extends State<OrderItem> {
       duration: Duration(milliseconds: 300),
       curve: Curves.easeIn,
       height: expandedOrder
-          ? min(240, widget.orditem.products.length * 20.0 + 140)
-          : 95,
+          // ? min(280, widget.orditem.products.length * 20.0 + 180): 95,
+          ? min(250, widget.orditem.products.length * 20.0 + 140): 120,
       child: Card(
         margin: EdgeInsets.all(10),
         child: Column(
@@ -46,7 +46,7 @@ class _OrderItemState extends State<OrderItem> {
               child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
                   height: expandedOrder
-                      ? min(110, widget.orditem.products.length *20.0 + 30)
+                      ? min(150, widget.orditem.products.length *20.0 + 30)
                       : 0,
                   child: ListView.builder(
                       itemCount: widget.orditem.products.length,

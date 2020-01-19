@@ -13,6 +13,7 @@ import './pages/auth_page.dart';
 import './pages/loading_page.dart';
 
 import './providers/auth.dart';
+import './helpers/custom_route.dart';
 
 void main() => runApp(MyApp());
 
@@ -41,10 +42,14 @@ class MyApp extends StatelessWidget {
           builder: (ctx, authData, _) => MaterialApp(
             title: '购物app',
             theme: ThemeData(
-              primarySwatch: Colors.purple,
-              accentColor: Colors.deepOrange,
-              fontFamily: 'Lato',
-            ),
+                primarySwatch: Colors.purple,
+                accentColor: Colors.deepOrange,
+                fontFamily: 'Lato',
+                //使用自定义路由主题
+                pageTransitionsTheme: PageTransitionsTheme(builders: {
+                  TargetPlatform.android: CustomPageTransitionBuilder(),
+                  TargetPlatform.iOS: CustomPageTransitionBuilder(),
+                })),
             home: authData.isAuth()
                 ? ProductsOverviewPage()
                 : FutureBuilder(

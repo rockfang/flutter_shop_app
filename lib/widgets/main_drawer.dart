@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../pages/orders_page.dart';
 import '../pages/user_products_page.dart';
 import '../providers/auth.dart';
+import '../helpers/custom_route.dart';
+
 class MainDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -11,7 +13,7 @@ class MainDrawer extends StatelessWidget {
         children: <Widget>[
           AppBar(
             title: Text('hello friend'),
-            automaticallyImplyLeading: false,//去掉标题栏的返回箭头按钮
+            automaticallyImplyLeading: false, //去掉标题栏的返回箭头按钮
           ),
           Divider(),
           ListTile(
@@ -29,6 +31,8 @@ class MainDrawer extends StatelessWidget {
             title: Text('Orders'),
             onTap: () {
               Navigator.of(context).pushReplacementNamed(OrdersPage.routeName);
+              //使用自定义路由进行路由跳转
+              // Navigator.of(context).pushReplacement(CustomRoute(builder: (ctx) => OrdersPage()));
             },
           ),
           SizedBox(
@@ -38,7 +42,8 @@ class MainDrawer extends StatelessWidget {
             leading: Icon(Icons.edit),
             title: Text('products manager'),
             onTap: () {
-              Navigator.of(context).pushReplacementNamed(UserProductsPage.routeName);
+              Navigator.of(context)
+                  .pushReplacementNamed(UserProductsPage.routeName);
             },
           ),
           ListTile(
